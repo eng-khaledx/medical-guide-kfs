@@ -206,3 +206,4 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 
 .clear-filters{align-self:start;color:var(--navy);font-weight:600;font-size:.95rem;text-decoration:underline;padding:8px 0}
+.fee.fee-muted,.fee-muted{font-weight:400;color:var(--muted,#6b7280)}

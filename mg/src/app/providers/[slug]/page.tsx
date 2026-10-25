@@ -6,7 +6,7 @@ import Icon from "@/components/Icon";
 import ContactActions from "@/components/ContactActions";
 import OfferCard from "@/components/OfferCard";
 import { getActiveOffers, getArea, getProviderBySlug, getProviders, getSpecialty, typeLabel } from "@/lib/data";
-import { SITE } from "@/lib/site";
+import { SITE, getFeeDisplay } from "@/lib/site";
 
 export const dynamicParams = false;
 export const generateStaticParams = () => getProviders().map((p) => ({ slug: p.slug }));
@@ -28,11 +28,12 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
   const area = getArea(p.area)?.name;
   const img = p.image ?? p.logo;
   const offers = getActiveOffers().filter((o) => o.providerId === p.id);
+  const fee = getFeeDisplay(p);
   const addr = [area, p.address].filter(Boolean).join(" - ") || undefined;
   const rows: [string, React.ReactNode][] = [
     ["ساعات العمل", p.workingHours],
     ["العنوان", addr && <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${addr} كفر الشيخ`)}`} target="_blank" rel="noopener noreferrer">{addr}</a>],
-    ["سعر الكشف", p.consultationPrice],
+    ["سعر الكشف", fee && (fee.isPlaceholder ? <span className="fee-muted">{fee.text}</span> : fee.text)],
     ["الهاتف", p.phone && <a href={`tel:${p.phone}`} dir="ltr">{p.phone}</a>],
   ];
   const ld = {
@@ -51,7 +52,7 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
           </div>
           <h1 className="page-title">{p.name}</h1>
           <p className="muted">{p.title ?? [typeLabel[p.providerType], sp].filter(Boolean).join(" • ")}</p>
-          {p.consultationPrice && <p className="fee">سعر الكشف: {p.consultationPrice}</p>}
+          {fee && <p className={fee.isPlaceholder ? "fee fee-muted" : "fee"}>سعر الكشف: {fee.text}</p>}
         </div>
       </div>
       <ContactActions p={p} />

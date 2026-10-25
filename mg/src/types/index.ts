@@ -24,6 +24,7 @@ export interface Provider {
   address?: string;
   workingHours?: string;
   consultationPrice?: string;
+  feeVerified?: boolean; // السعر موثق؛ بدونه لا يظهر السعر ما دام showFees=false
   services?: string[];
   offers?: string[];
   featured?: boolean;
