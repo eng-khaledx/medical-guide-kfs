@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Icon from "@/components/Icon";
+import FilterForm from "@/components/FilterForm";
 import SearchBar from "@/components/SearchBar";
 import ProviderCard from "@/components/ProviderCard";
 import EmptyState from "@/components/EmptyState";
@@ -28,26 +29,10 @@ export default function SearchPage({ searchParams }: { searchParams: SP }) {
             <h2>تصفية النتائج</h2>
             <label htmlFor="filter-toggle" className="icon-btn" aria-label="إغلاق"><Icon name="close" size={20} /></label>
           </div>
-          <form className="filters" action="/search" method="get">
-            <input type="hidden" name="q" value={q} />
-            <label>نوع الخدمة
-              <select name="type" defaultValue={type}>
-                <option value="">الكل</option>
-                {categories.map((c) => <option key={c.slug} value={c.type}>{c.name}</option>)}
-              </select></label>
-            <label>التخصص
-              <select name="specialty" defaultValue={specialty}>
-                <option value="">الكل</option>
-                {getSpecialties().map((s) => <option key={s.slug} value={s.slug}>{s.name}</option>)}
-              </select></label>
-            <label>المنطقة
-              <select name="area" defaultValue={area}>
-                <option value="">الكل</option>
-                {getAreas().map((a) => <option key={a.slug} value={a.slug}>{a.name}</option>)}
-              </select></label>
-            <label className="check"><input type="checkbox" name="featured" value="1" defaultChecked={featured} />مميز فقط</label>
-            <button className="btn btn-primary" type="submit">تطبيق</button>
-          </form>
+          <FilterForm q={q} type={type} specialty={specialty} area={area} featured={featured}
+            types={categories.map((c) => ({ value: c.type, name: c.name }))}
+            specialties={getSpecialties().map((x) => ({ value: x.slug, name: x.name }))}
+            areas={getAreas().map((a) => ({ value: a.slug, name: a.name }))} />
         </aside>
         <div className="results">
           {results.length ? <div className="grid">{results.map((p) => <ProviderCard key={p.id} p={p} />)}</div> : <EmptyState />}

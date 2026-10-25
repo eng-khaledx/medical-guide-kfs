@@ -204,3 +204,5 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 .fab:hover .fab-tip,.fab:focus-visible .fab-tip{opacity:1}
 @media(prefers-reduced-motion:no-preference){.fab{animation:pulse 3s ease-out 2s 3}@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(35,201,107,.5)}70%{box-shadow:0 0 0 16px rgba(35,201,107,0)}100%{box-shadow:0 0 0 0 rgba(35,201,107,0)}}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+
+.clear-filters{align-self:start;color:var(--navy);font-weight:600;font-size:.95rem;text-decoration:underline;padding:8px 0}
