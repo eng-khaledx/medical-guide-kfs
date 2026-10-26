@@ -260,3 +260,13 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 .join-side-wa{display:flex;align-items:center;min-height:44px;margin-top:6px;color:var(--link);font-weight:600;text-decoration:underline}
 @media(min-width:960px){.join-layout{grid-template-columns:3fr 2fr;gap:24px}.join-side{position:sticky;top:88px;padding:20px}}
 .emergency-note{margin:10px 0 0;font-size:.875rem;color:var(--muted)}.emergency-note a{font-weight:800;color:#b42318;text-decoration:underline;padding:0 2px}
+
+/* بطاقات الأطباء: بديل الصورة بحرف بلون التخصص، شارة +N، وارتفاع موحد */
+.avatar-fill{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;font-weight:800;line-height:1}
+.avatar-lg .avatar-fill{font-size:2.8rem}
+.tags li.tag-more{background:var(--light);font-weight:700}
+.grid{align-items:stretch}.pcard{height:100%}
+/* قسم الرئيسية: 4 موبايل، 6 تابلت/لاب صغير، 8 من 1200px — بدون صف أخير ناقص */
+.home-doctors>*:nth-child(n+5){display:none}
+@media(min-width:600px){.home-doctors>*:nth-child(-n+6){display:flex}}
+@media(min-width:1200px){.home-doctors>*{display:flex}}

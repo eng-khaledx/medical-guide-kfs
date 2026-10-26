@@ -1,16 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
+import AvatarFallback from "./AvatarFallback";
 import Icon from "./Icon";
 import TrackedLink from "./TrackedLink";
 import { Provider } from "@/types";
 import { getArea, getSpecialty, typeLabel } from "@/lib/data";
-import { getFeeDisplay, showFeatured } from "@/lib/site";
+import { showFeatured } from "@/lib/site";
 import { MSG, createWhatsAppUrl, getContact } from "@/lib/whatsapp";
 
 export default function ProviderCard({ p }: { p: Provider }) {
   const sub = getSpecialty(p.specialty)?.name ?? typeLabel[p.providerType];
   const area = getArea(p.area)?.name;
-  const fee = getFeeDisplay(p);
   const img = p.image ?? p.logo;
   const c = getContact(p);
   const wa = createWhatsAppUrl({ phone: c.whatsapp, message: MSG.contact(p.name, getSpecialty(p.specialty)?.name) });
@@ -21,14 +21,17 @@ export default function ProviderCard({ p }: { p: Provider }) {
         {p.verified && <span className="badge badge-ok">موثق</span>}
       </div>
       <div className="avatar">
-        {img ? <Image src={img} alt={p.name} fill sizes="76px" style={{ objectFit: "cover" }} />
-          : <Icon name={p.providerType === "PHARMACY" ? "pill" : p.providerType === "LABORATORY" ? "flask" : "user"} size={30} />}
+        {img ? <Image src={img} alt={p.name} fill sizes="76px" style={{ objectFit: "cover" }} /> : <AvatarFallback p={p} />}
       </div>
       <h3><Link href={`/providers/${p.slug}`}>{p.name}</Link></h3>
       <p className="muted">{p.title ?? sub}</p>
       {area && <p className="muted small"><Icon name="pin" size={14} /> {area}</p>}
-      {p.subspecialties && p.subspecialties.length > 0 && <ul className="tags tags-sm">{p.subspecialties.map((s) => <li key={s}>{s}</li>)}</ul>}
-      {fee && <p className={fee.isPlaceholder ? "fee fee-muted" : "fee"}>سعر الكشف: {fee.text}</p>}
+      {p.subspecialties && p.subspecialties.length > 0 && (
+        <ul className="tags tags-sm">
+          {p.subspecialties.slice(0, 2).map((s) => <li key={s}>{s}</li>)}
+          {p.subspecialties.length > 2 && <li className="tag-more" aria-label={`و${p.subspecialties.length - 2} تخصصات أخرى`}>+{p.subspecialties.length - 2}</li>}
+        </ul>
+      )}
       {p.services && p.services.length > 0 && <p className="small services">{p.services.slice(0, 3).join(" • ")}</p>}
       <div className="pcard-actions">
         <Link className="btn btn-ghost" href={`/providers/${p.slug}`}>عرض الملف</Link>

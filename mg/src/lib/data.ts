@@ -23,6 +23,20 @@ export function getProviders(): Provider[] {
 export const getDoctors = () => getProviders().filter((p) => p.providerType === "DOCTOR");
 export const getProviderBySlug = (slug: string) => getProviders().find((p) => p.slug === slug);
 export const getProviderById = (id: string) => getProviders().find((p) => p.id === id);
+/** أطباء قسم الرئيسية: واحد من كل تخصص بترتيب homeTiles (المميز أولًا داخل التخصص)، ثم يكمل من تخصصات تانية لحد n. */
+export function getHomeDoctors(n = 8): Provider[] {
+  const docs = getDoctors();
+  const picked: Provider[] = [];
+  const take = (d?: Provider) => { if (d && !picked.includes(d)) picked.push(d); };
+  for (const t of homeTiles) {
+    if (!t.spec || picked.length >= n) continue;
+    const inSpec = docs.filter((d) => d.specialty === t.spec);
+    take(inSpec.find((d) => d.featured) ?? inSpec[0]);
+  }
+  for (const d of docs) { if (picked.length >= n) break; if (!picked.some((x) => x.specialty === d.specialty)) take(d); }
+  for (const d of docs) { if (picked.length >= n) break; take(d); }
+  return picked;
+}
 export const getFeaturedProviders = () => getProviders().filter((p) => p.featured);
 export const getSpecialties = (): Specialty[] => specialties;
 export const getSpecialty = (slug?: string) => specialties.find((s) => s.slug === slug);

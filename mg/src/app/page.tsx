@@ -5,12 +5,12 @@ import Banners from "@/components/Banners";
 import Tile from "@/components/Tile";
 import ProviderCard from "@/components/ProviderCard";
 import OfferCard from "@/components/OfferCard";
-import { getActiveOffers, getAllTiles, getDoctors, getFeaturedProviders, getHomeTiles, popularSearches } from "@/lib/data";
+import { getActiveOffers, getAllTiles, getDoctors, getHomeDoctors, getHomeTiles, popularSearches } from "@/lib/data";
 import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
 import { SITE, showFeatured } from "@/lib/site";
 
 export default function Home() {
-  const featured = getFeaturedProviders().slice(0, 8);
+  const featured = getHomeDoctors(8);
   const offers = getActiveOffers();
   return (
     <>
@@ -55,7 +55,7 @@ export default function Home() {
             <h2 className="section-title">{showFeatured ? "مقدمو خدمة مميزون" : "أطباء من الدليل"}</h2>
             <Link href="/search" className="more">عرض الكل <span className="more-arrow" aria-hidden="true">←</span></Link>
           </div>
-          <div className="grid">{featured.map((p) => <ProviderCard key={p.id} p={p} />)}</div>
+          <div className="grid home-doctors">{featured.map((p) => <ProviderCard key={p.id} p={p} />)}</div>
           <Link className="btn btn-outline all-doctors-btn" href="/search">عرض كل الأطباء ({getDoctors().length}) ←</Link>
         </section>
       )}

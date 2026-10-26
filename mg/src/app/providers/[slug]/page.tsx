@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import AvatarFallback from "@/components/AvatarFallback";
 import Icon from "@/components/Icon";
 import ContactActions from "@/components/ContactActions";
 import OfferCard from "@/components/OfferCard";
@@ -46,7 +47,7 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
       <nav className="crumbs" aria-label="مسار التصفح"><Link href="/">الرئيسية</Link> / <Link href="/search">الخدمات</Link> / <span>{p.name}</span></nav>
       <div className="profile">
-        <div className="avatar avatar-lg">{img ? <Image src={img} alt={p.name} fill sizes="120px" style={{ objectFit: "cover" }} /> : <Icon name="user" size={44} />}</div>
+        <div className="avatar avatar-lg">{img ? <Image src={img} alt={p.name} fill sizes="120px" style={{ objectFit: "cover" }} /> : <AvatarFallback p={p} iconSize={44} />}</div>
         <div>
           <div className="badges static">
             {showFeatured && p.featured && <span className="badge">مميز</span>}{p.verified && <span className="badge badge-ok">موثق</span>}
