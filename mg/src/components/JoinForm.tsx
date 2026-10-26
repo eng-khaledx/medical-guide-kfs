@@ -4,6 +4,7 @@ import Link from "next/link";
 import { ATTACH_NOTE, DAYS, HOURS, LANDLINE_RE, MOBILE_RE, OTHER, SCHEDULE_NOTE_LABEL, fieldLabels, formatSchedule, isMapUrl, type JoinConfig, type JoinField } from "@/lib/join";
 import { createWhatsAppUrl } from "@/lib/whatsapp";
 import { GUIDE_CONTACT_NUMBER } from "@/lib/site";
+import { trackEvent } from "@/lib/track";
 
 const toLatin = (s: string) => s.replace(/[٠-٩]/g, (d) => String("٠١٢٣٤٥٦٧٨٩".indexOf(d)));
 const ATTACH_MESSAGE = "📎 هبعت في نفس الشات: صورة شخصية، صور العيادة، وصورة الشهادة أو كارنيه النقابة للتوثيق.";
@@ -61,6 +62,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
     ].join("\n");
     // واتساب أولًا وبشكل متزامن داخل حدث الضغط حتى لا يمنعه المتصفح
     window.open(createWhatsAppUrl({ phone: GUIDE_CONTACT_NUMBER.whatsapp, message }), "_blank", "noopener,noreferrer");
+    if (!String(fd.get("website") ?? "").trim()) trackEvent({ event: "join_submit", page: window.location.pathname });
     // الحفظ في الشيت في الخلفية؛ فشله لا يؤثر على واتساب
     try {
       void fetch("/api/join", {

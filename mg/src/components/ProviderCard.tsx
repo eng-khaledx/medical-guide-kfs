@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Icon from "./Icon";
+import TrackedLink from "./TrackedLink";
 import { Provider } from "@/types";
 import { getArea, getSpecialty, typeLabel } from "@/lib/data";
 import { getFeeDisplay } from "@/lib/site";
@@ -31,8 +32,8 @@ export default function ProviderCard({ p }: { p: Provider }) {
       {p.services && p.services.length > 0 && <p className="small services">{p.services.slice(0, 3).join(" • ")}</p>}
       <div className="pcard-actions">
         <Link className="btn btn-ghost" href={`/providers/${p.slug}`}>عرض الملف</Link>
-        <a className="icon-btn icon-wa" href={wa} target="_blank" rel="noopener noreferrer" aria-label={`واتساب ${p.name}${c.whatsappViaGuide ? " عبر دليلك الطبي" : ""}`}><Icon name="chat" size={18} /></a>
-        <a className="icon-btn" href={`tel:${c.phone}`} aria-label={`اتصال ${p.name}${c.phoneViaGuide ? " عبر دليلك الطبي" : ""}`}><Icon name="phone" size={18} /></a>
+        <TrackedLink event="whatsapp_click" slug={p.slug} name={p.name} specialty={sub} className="icon-btn icon-wa" href={wa} target="_blank" rel="noopener noreferrer" aria-label={`واتساب ${p.name}${c.whatsappViaGuide ? " عبر دليلك الطبي" : ""}`}><Icon name="chat" size={18} /></TrackedLink>
+        <TrackedLink event="call_click" slug={p.slug} name={p.name} specialty={sub} className="icon-btn" href={`tel:${c.phone}`} aria-label={`اتصال ${p.name}${c.phoneViaGuide ? " عبر دليلك الطبي" : ""}`}><Icon name="phone" size={18} /></TrackedLink>
       </div>
     </article>
   );
