@@ -17,8 +17,14 @@ ul,ol{margin:0;padding:0;list-style:none}
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 .page-title{font-size:clamp(1.5rem,5vw,2.1rem);font-weight:800}
 .section-title{font-size:clamp(1.2rem,3.5vw,1.5rem);font-weight:800;margin-bottom:16px;padding-bottom:6px;display:inline-block;border-bottom:3px solid var(--gold)}
-.section-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
-.more{color:var(--link);font-weight:600;display:inline-flex;align-items:center;min-height:44px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.section-head .section-title{margin-bottom:0}
+/* رابط "عرض الكل" بشكل pill: يُستخدم لأي رابط عرض الكل في رأس قسم */
+.more{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 16px;border-radius:999px;background:rgba(20,51,84,.08);color:var(--navy);font-weight:600;white-space:nowrap;transition:background .15s}
+.more .more-arrow{display:inline-block;transition:transform .15s}
+.more:hover,.more:focus-visible{background:rgba(20,51,84,.15)}
+.more:hover .more-arrow,.more:focus-visible .more-arrow{transform:translateX(-3px)}
+.more:focus-visible{outline:2px solid var(--navy);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.more,.more .more-arrow{transition:none}}
 
 .btn{font:inherit;display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:999px;font-weight:700;border:1px solid transparent;cursor:pointer;transition:background .15s,transform .15s;text-align:center}
 .btn:hover{transform:translateY(-1px)}

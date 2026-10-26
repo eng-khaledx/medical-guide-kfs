@@ -53,7 +53,7 @@ export default function Home() {
         <section className="container section">
           <div className="section-head">
             <h2 className="section-title">مقدمو خدمة مميزون</h2>
-            <Link href="/search" className="more">عرض الكل</Link>
+            <Link href="/search" className="more">عرض الكل <span className="more-arrow" aria-hidden="true">←</span></Link>
           </div>
           <div className="grid">{featured.map((p) => <ProviderCard key={p.id} p={p} />)}</div>
           <Link className="btn btn-outline all-doctors-btn" href="/search">عرض كل الأطباء ({getDoctors().length}) ←</Link>
