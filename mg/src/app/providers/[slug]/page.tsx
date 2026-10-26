@@ -7,7 +7,7 @@ import ContactActions from "@/components/ContactActions";
 import OfferCard from "@/components/OfferCard";
 import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
 import { getActiveOffers, getArea, getProviderBySlug, getProviders, getSpecialty, typeLabel } from "@/lib/data";
-import { GUIDE_CONTACT_NUMBER, SITE, getFeeDisplay } from "@/lib/site";
+import { GUIDE_CONTACT_NUMBER, SITE, getFeeDisplay, showFeatured } from "@/lib/site";
 
 export const dynamicParams = false;
 export const generateStaticParams = () => getProviders().map((p) => ({ slug: p.slug }));
@@ -49,7 +49,7 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
         <div className="avatar avatar-lg">{img ? <Image src={img} alt={p.name} fill sizes="120px" style={{ objectFit: "cover" }} /> : <Icon name="user" size={44} />}</div>
         <div>
           <div className="badges static">
-            {p.featured && <span className="badge">مميز</span>}{p.verified && <span className="badge badge-ok">موثق</span>}
+            {showFeatured && p.featured && <span className="badge">مميز</span>}{p.verified && <span className="badge badge-ok">موثق</span>}
           </div>
           <h1 className="page-title">{p.name}</h1>
           <p className="muted">{p.title ?? [typeLabel[p.providerType], sp].filter(Boolean).join(" • ")}</p>

@@ -1,6 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { showFeatured } from "@/lib/site";
 
 interface Opt { value: string; name: string }
 interface Props { q: string; type: string; specialty: string; area: string; featured: boolean; types: Opt[]; specialties: Opt[]; areas: Opt[] }
@@ -36,7 +37,7 @@ export default function FilterForm({ q, type, specialty, area, featured, types, 
           <option value="">الكل</option>
           {areas.map((o) => <option key={o.value} value={o.value}>{o.name}</option>)}
         </select></label>
-      <label className="check"><input type="checkbox" name="featured" value="1" defaultChecked={featured} />مميز فقط</label>
+      {showFeatured && <label className="check"><input type="checkbox" name="featured" value="1" defaultChecked={featured} />مميز فقط</label>}
       <noscript><button className="btn btn-primary" type="submit">تطبيق</button></noscript>
       {active && <Link href="/search" className="clear-filters">مسح الفلاتر</Link>}
     </form>

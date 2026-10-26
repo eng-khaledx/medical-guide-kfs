@@ -6,6 +6,7 @@ import SearchBar from "@/components/SearchBar";
 import ProviderCard from "@/components/ProviderCard";
 import EmptyState from "@/components/EmptyState";
 import { categories } from "@/data/categories";
+import { showFeatured } from "@/lib/site";
 import { getArea, getAreas, getSpecialties, searchProviders } from "@/lib/data";
 
 export const metadata: Metadata = { title: "نتائج البحث", robots: { index: false } };
@@ -14,7 +15,7 @@ const one = (v: unknown) => (typeof v === "string" ? v.slice(0, 80) : "");
 
 export default function SearchPage({ searchParams }: { searchParams: SP }) {
   const q = one(searchParams.q), area = one(searchParams.area), type = one(searchParams.type);
-  const specialty = one(searchParams.specialty), featured = searchParams.featured === "1";
+  const specialty = one(searchParams.specialty), featured = showFeatured && searchParams.featured === "1";
   const results = searchProviders({ q, area, type, specialty, featured });
   const KFS = "kafr-el-sheikh";
   // لا نتائج بسبب المنطقة: نفس الفلاتر في كفرالشيخ فيها نتائج

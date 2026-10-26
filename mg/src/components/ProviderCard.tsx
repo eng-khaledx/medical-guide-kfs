@@ -4,7 +4,7 @@ import Icon from "./Icon";
 import TrackedLink from "./TrackedLink";
 import { Provider } from "@/types";
 import { getArea, getSpecialty, typeLabel } from "@/lib/data";
-import { getFeeDisplay } from "@/lib/site";
+import { getFeeDisplay, showFeatured } from "@/lib/site";
 import { MSG, createWhatsAppUrl, getContact } from "@/lib/whatsapp";
 
 export default function ProviderCard({ p }: { p: Provider }) {
@@ -17,7 +17,7 @@ export default function ProviderCard({ p }: { p: Provider }) {
   return (
     <article className="pcard">
       <div className="badges">
-        {p.featured && <span className="badge">مميز</span>}
+        {showFeatured && p.featured && <span className="badge">مميز</span>}
         {p.verified && <span className="badge badge-ok">موثق</span>}
       </div>
       <div className="avatar">

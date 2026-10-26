@@ -1,3 +1,4 @@
+import { showFeatured } from "./site";
 import { Area, Banner, Category, Offer, Provider, ProviderType, Specialty } from "@/types";
 import { specialties } from "@/data/specialties";
 import { categories } from "@/data/categories";
@@ -85,9 +86,9 @@ export function searchProviders(f: SearchFilters): Provider[] {
   if (f.type) list = list.filter((p) => p.providerType === f.type);
   if (f.area) list = list.filter((p) => p.area === f.area);
   if (f.specialty) list = list.filter((p) => p.specialty === f.specialty || p.specialties?.includes(f.specialty!));
-  if (f.featured) list = list.filter((p) => p.featured);
+  if (showFeatured && f.featured) list = list.filter((p) => p.featured);
   const tokens = words((f.q ?? "").slice(0, 80));
-  const feat = (p: Provider) => Number(!!p.featured);
+  const feat = (p: Provider) => Number(showFeatured && !!p.featured);
   if (!tokens.length) return [...list].sort((a, b) => feat(b) - feat(a));
   // مستوى الصلة = أسوأ مستوى تطابقت عنده كلمات البحث (أقل رقم = أفضل)؛ ثم المميز؛ ثم الترتيب الحالي (الفرز مستقر)
   const ranked: { p: Provider; level: number }[] = [];

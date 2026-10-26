@@ -22,3 +22,6 @@ export function getFeeDisplay(p: { consultationPrice?: string; feeVerified?: boo
 
 /** رابط صفحة فيسبوك؛ اتركه فارغًا لإخفاء الأيقونة. */
 export const FACEBOOK_URL = "";
+
+/** شارة "مميز" والترتيب والفلتر الخاصة بالمميزين: مطفية لحد ما يشترك أطباء فعلًا. حقل featured يفضل في البيانات. */
+export const showFeatured: boolean = false;

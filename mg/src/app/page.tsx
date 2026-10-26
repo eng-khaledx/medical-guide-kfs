@@ -7,7 +7,7 @@ import ProviderCard from "@/components/ProviderCard";
 import OfferCard from "@/components/OfferCard";
 import { getActiveOffers, getAllTiles, getDoctors, getFeaturedProviders, getHomeTiles, popularSearches } from "@/lib/data";
 import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
-import { SITE } from "@/lib/site";
+import { SITE, showFeatured } from "@/lib/site";
 
 export default function Home() {
   const featured = getFeaturedProviders().slice(0, 8);
@@ -52,7 +52,7 @@ export default function Home() {
       {featured.length > 0 && (
         <section className="container section">
           <div className="section-head">
-            <h2 className="section-title">مقدمو خدمة مميزون</h2>
+            <h2 className="section-title">{showFeatured ? "مقدمو خدمة مميزون" : "أطباء من الدليل"}</h2>
             <Link href="/search" className="more">عرض الكل <span className="more-arrow" aria-hidden="true">←</span></Link>
           </div>
           <div className="grid">{featured.map((p) => <ProviderCard key={p.id} p={p} />)}</div>
