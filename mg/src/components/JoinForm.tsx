@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ATTACH_NOTE, DAYS, HOURS, LANDLINE_RE, MOBILE_RE, OTHER, SCHEDULE_NOTE_LABEL, fieldLabels, formatSchedule, isMapUrl, type JoinConfig, type JoinField } from "@/lib/join";
 import { createWhatsAppUrl } from "@/lib/whatsapp";
@@ -10,6 +10,8 @@ const ATTACH_MESSAGE = "📎 هبعت في نفس الشات: صورة شخصي�
 
 export default function JoinForm({ config, areas, specialties = [] }: { config: JoinConfig; areas: { slug: string; name: string }[]; specialties?: string[] }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const renderedAt = useRef(0);
+  useEffect(() => { renderedAt.current = Date.now(); }, []);
   const [otherSpecialty, setOtherSpecialty] = useState(false);
   const [geo, setGeo] = useState<{ busy: boolean; msg: string; ok?: boolean }>({ busy: false, msg: "" });
 
@@ -63,7 +65,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
     try {
       void fetch("/api/join", {
         method: "POST", keepalive: true, headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: config.slug, fields: data, website: String(fd.get("website") ?? "") }),
+        body: JSON.stringify({ type: config.slug, fields: data, website: String(fd.get("website") ?? ""), elapsed: Date.now() - renderedAt.current }),
       }).catch(() => {});
     } catch { /* تجاهل */ }
   }

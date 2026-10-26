@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import Icon from "@/components/Icon";
 import FilterForm from "@/components/FilterForm";
 import SearchBar from "@/components/SearchBar";
@@ -15,6 +16,10 @@ export default function SearchPage({ searchParams }: { searchParams: SP }) {
   const q = one(searchParams.q), area = one(searchParams.area), type = one(searchParams.type);
   const specialty = one(searchParams.specialty), featured = searchParams.featured === "1";
   const results = searchProviders({ q, area, type, specialty, featured });
+  const KFS = "kafr-el-sheikh";
+  // لا نتائج بسبب المنطقة: نفس الفلاتر في كفرالشيخ فيها نتائج
+  const areaEmpty = results.length === 0 && !!getArea(area) && area !== KFS && searchProviders({ q, area: KFS, type, specialty, featured }).length > 0;
+  const kfsHref = `/search?${new URLSearchParams(Object.entries({ q, type, specialty, area: KFS, ...(featured && { featured: "1" }) }).filter(([, v]) => v) as [string, string][])}`;
   return (
     <div className="container section">
       <h1 className="page-title">{q ? `نتائج البحث عن "${q}"` : "كل مقدمي الخدمة"}</h1>
@@ -35,7 +40,16 @@ export default function SearchPage({ searchParams }: { searchParams: SP }) {
             areas={getAreas().map((a) => ({ value: a.slug, name: a.name }))} />
         </aside>
         <div className="results">
-          {results.length ? <div className="grid">{results.map((p) => <ProviderCard key={p.id} p={p} />)}</div> : <EmptyState />}
+          {results.length ? <div className="grid">{results.map((p) => <ProviderCard key={p.id} p={p} />)}</div> : areaEmpty ? (
+            <div className="empty">
+              <h2>لسه مفيش أطباء في المنطقة دي، بنضيفهم قريب.</h2>
+              <p className="muted">تقدر تشوف الأطباء المتاحين في كفرالشيخ، أو لو إنت دكتور في المنطقة دي سجّل عيادتك.</p>
+              <div className="empty-actions">
+                <Link className="btn btn-primary" href={kfsHref}>شوف الأطباء في كفرالشيخ</Link>
+                <Link className="btn btn-ghost" href="/join/doctor">أنت طبيب هنا؟ سجّل عيادتك</Link>
+              </div>
+            </div>
+          ) : <EmptyState />}
         </div>
       </div>
     </div>

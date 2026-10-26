@@ -81,7 +81,10 @@ export default function Home() {
             <h2>أنت مقدم خدمة طبية؟</h2>
             <p className="muted">خلّي خدمتك موجودة على دليلك الطبي بكفرالشيخ.</p>
           </div>
-          <a className="btn btn-primary" href={createWhatsAppUrl({ message: MSG.join })} target="_blank" rel="noopener noreferrer">تواصل معنا</a>
+          <div className="cta-actions">
+            <Link className="btn btn-primary" href="/join/doctor">سجّل عيادتك</Link>
+            <a className="cta-secondary" href={createWhatsAppUrl({ message: MSG.join })} target="_blank" rel="noopener noreferrer">عندك سؤال؟ كلمنا واتساب</a>
+          </div>
         </div>
       </section>
     </>

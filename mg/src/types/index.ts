@@ -47,5 +47,6 @@ export interface Banner {
   id: string; title: string; subtitle?: string; image?: string; ctaText: string;
   ctaUrl?: string; // رابط داخلي مثل "/category/doctors"
   ctaWhatsAppMessage?: string; // لو موجودة يفتح واتساب برسالة جاهزة
+  secondaryWhatsAppMessage?: string; // رابط صغير تحت الزرار "عندك سؤال؟ كلمنا واتساب" برسالة جاهزة
   active: boolean; startDate?: string; endDate?: string; providerId?: string; offerId?: string;
 }
