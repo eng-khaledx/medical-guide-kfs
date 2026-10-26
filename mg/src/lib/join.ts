@@ -46,6 +46,33 @@ export const joinConfigs: Record<string, JoinConfig> = {
   },
 };
 
+export const cleanLabel = (label: string) => label.replace(/ \(اختياري\)$/, "");
+export const MOBILE_RE = /^01[0125]\d{8}$/;
+export const MAX_FIELD_LENGTH = 200;
+
+/** اسم الورقة في Google Sheets لكل نموذج. */
+export const sheetNames: Record<string, string> = { doctor: "أطباء", lab: "معامل", center: "مراكز", nurse: "تمريض", company: "شركات" };
+
+/** تحقق من جسم الطلب؛ يرجع الحقول المنظفة أو رسالة خطأ. المفاتيح هي أسماء الحقول بالعربية بدون "(اختياري)". */
+export function validateJoin(type: unknown, fields: unknown): { ok: true; fields: Record<string, string> } | { ok: false; error: string } {
+  const config = typeof type === "string" && Object.hasOwn(joinConfigs, type) ? joinConfigs[type] : undefined;
+  if (!config) return { ok: false, error: "unknown type" };
+  if (!fields || typeof fields !== "object" || Array.isArray(fields)) return { ok: false, error: "bad fields" };
+  const input = fields as Record<string, unknown>;
+  const out: Record<string, string> = {};
+  for (const f of config.fields) {
+    const label = cleanLabel(f.label);
+    const raw = input[label];
+    const v = typeof raw === "string" ? raw.trim() : "";
+    if (raw !== undefined && typeof raw !== "string") return { ok: false, error: `bad value: ${label}` };
+    if (v.length > MAX_FIELD_LENGTH) return { ok: false, error: `too long: ${label}` };
+    if (f.required && !v) return { ok: false, error: `required: ${label}` };
+    if (v && f.kind === "tel" && !MOBILE_RE.test(v)) return { ok: false, error: "bad mobile" };
+    if (v) out[label] = v;
+  }
+  return { ok: true, fields: out };
+}
+
 export const joinLinks = [
   { href: "/join/doctor", label: "انضم كطبيب" },
   { href: "/join/lab", label: "انضم كمعمل" },

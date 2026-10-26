@@ -217,3 +217,4 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 .choice input{width:20px;height:20px;accent-color:var(--navy)}
 .join-form .btn{width:100%}
 .job-card{display:flex;flex-direction:column;gap:8px}.job-card h2{margin:0}
+.hp{position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none}
