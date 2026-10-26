@@ -190,13 +190,13 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 .g-item{position:relative;aspect-ratio:4/3;border-radius:12px;overflow:hidden}
 
 /* ---------- footer / fab ---------- */
-.site-footer{margin-top:32px;background:var(--soft);border-top:1px solid var(--line);padding:28px 0 16px}
-.footer-grid{display:grid;gap:20px}@media(min-width:760px){.footer-grid{grid-template-columns:1.4fr 1fr 1fr 1fr}}.footer-head{font-weight:800;min-height:36px;display:flex;align-items:center}
+.site-footer{margin-top:32px;background:var(--navy);color:#dbe7f3;padding:32px 0 16px}.site-footer .brand-text small{color:#a9bfd3}
+.footer-grid{display:grid;gap:24px}@media(min-width:760px){.footer-grid{grid-template-columns:1.4fr 1fr 1fr 1fr}}.footer-head{font-weight:800;min-height:36px;display:flex;align-items:center}
 .footer-links,.footer-contact{display:flex;flex-direction:column;gap:2px}
 .footer-links a,.footer-contact a{display:flex;align-items:center;min-height:44px}
-.footer-links a:hover,.footer-contact a:hover{color:var(--link)}
+.footer-links a:hover,.footer-contact a:hover{color:#fff;text-decoration:underline}.site-footer .footer-head{color:#fff}
 .footer-contact a[dir]{font-weight:800;font-size:1.1rem;text-align:start}
-.copyright{text-align:center;color:var(--muted);font-size:.85rem;margin:20px 0 0}
+.copyright{text-align:center;color:#a9bfd3;font-size:.85rem;margin:20px 0 0;padding-top:16px;border-top:1px solid rgba(255,255,255,.15)}
 
 .fab{position:fixed;bottom:18px;inset-inline-start:16px;z-index:60;display:none;place-items:center;width:56px;height:56px;border-radius:50%;background:var(--wa);color:#fff;box-shadow:0 6px 18px rgba(20,51,84,.25)}
 @media(min-width:960px){.fab{display:grid}}
@@ -218,3 +218,7 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 .join-form .btn{width:100%}
 .job-card{display:flex;flex-direction:column;gap:8px}.job-card h2{margin:0}
 .hp{position:absolute;width:0;height:0;overflow:hidden;opacity:0;pointer-events:none}
+.footer-about{color:#c5d6e6;font-size:.95rem;margin:12px 0}
+.footer-social{display:flex;gap:10px}.footer-social a{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.12);color:#fff}.footer-social a:hover{background:rgba(255,255,255,.22)}
+.claim-link{margin-top:20px;font-size:.9rem}.claim-link a{color:var(--link);text-decoration:underline}
+.legal{max-width:720px}.legal h2{font-size:1.1rem;font-weight:800;margin-top:20px}.legal p{margin-top:6px;line-height:1.8}

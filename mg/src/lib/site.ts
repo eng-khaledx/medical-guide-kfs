@@ -19,3 +19,6 @@ export function getFeeDisplay(p: { consultationPrice?: string; feeVerified?: boo
   const real = showFees || p.feeVerified === true;
   return { text: real ? p.consultationPrice : FEE_PLACEHOLDER, isPlaceholder: !real };
 }
+
+/** رابط صفحة فيسبوك؛ اتركه فارغًا لإخفاء الأيقونة. */
+export const FACEBOOK_URL = "";

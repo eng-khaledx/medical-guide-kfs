@@ -5,8 +5,9 @@ import { notFound } from "next/navigation";
 import Icon from "@/components/Icon";
 import ContactActions from "@/components/ContactActions";
 import OfferCard from "@/components/OfferCard";
+import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
 import { getActiveOffers, getArea, getProviderBySlug, getProviders, getSpecialty, typeLabel } from "@/lib/data";
-import { SITE, getFeeDisplay } from "@/lib/site";
+import { GUIDE_CONTACT_NUMBER, SITE, getFeeDisplay } from "@/lib/site";
 
 export const dynamicParams = false;
 export const generateStaticParams = () => getProviders().map((p) => ({ slug: p.slug }));
@@ -69,6 +70,7 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
           <dl className="info">{rows.filter(([, v]) => v).map(([k, v]) => <div key={k}><dt>{k}</dt><dd>{v}</dd></div>)}</dl>
         </aside>
       </div>
+      <p className="claim-link"><a href={createWhatsAppUrl({ phone: GUIDE_CONTACT_NUMBER.whatsapp, message: MSG.claim(p.name, `${SITE.url}/providers/${p.slug}`) })} target="_blank" rel="noopener noreferrer">{p.providerType === "DOCTOR" ? "أنت الدكتور؟" : "أنت صاحب الخدمة؟"} عدّل بياناتك أو اطلب حذفها</a></p>
       {offers.length > 0 && (<><h2 className="section-title">عروض</h2><div className="grid">{offers.map((o) => <OfferCard key={o.id} o={o} />)}</div></>)}
     </div>
   );
