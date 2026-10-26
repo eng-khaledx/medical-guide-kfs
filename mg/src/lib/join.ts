@@ -5,7 +5,7 @@ export type JoinField = FieldExtras &
   | { name: string; label: string; kind: "text" | "email"; required?: boolean; placeholder?: string }
   | { name: string; label: string; kind: "tel"; required?: boolean; placeholder?: string; landline?: boolean }
   | { name: string; label: string; kind: "number"; required?: boolean; max?: number }
-  | { name: string; label: string; kind: "textarea" | "mapurl" | "area" | "specialty" | "schedule" | "consent"; required?: boolean; placeholder?: string }
+  | { name: string; label: string; kind: "textarea" | "mapurl" | "area" | "areas" | "specialty" | "schedule" | "consent"; required?: boolean; placeholder?: string }
   | { name: string; label: string; kind: "select" | "radio" | "checkbox"; options: string[]; required?: boolean });
 
 /** attach: نص تنبيه الصور وسطر رسالة واتساب لنماذج غير الطبيب (الطبيب يستخدم attachNote). */
@@ -116,13 +116,20 @@ export const joinConfigs: Record<string, JoinConfig> = {
   },
   nurse: {
     slug: "nurse", role: "ممرض/ممرضة", title: "انضم كممرض/ممرضة", intro: "سجّل بياناتك وهنتواصل معاك على واتساب.",
+    attach: { note: "ابعت في نفس الشات: صورة شخصية وصورة كارنيه نقابة التمريض للتوثيق.", message: "📎 ابعت في نفس الشات: صورة شخصية وصورة كارنيه نقابة التمريض للتوثيق." },
     fields: [
       name("الاسم"),
       { name: "gender", label: "النوع", kind: "radio", options: ["ممرض", "ممرضة"] },
+      { name: "qualification", label: "المؤهل", kind: "select", required: true, options: ["دبلوم تمريض", "معهد فني تمريض", "بكالوريوس تمريض", "أخرى"] },
       mobile, area,
+      { name: "coverage", label: "المناطق اللي تقدر تروحها", kind: "areas", required: true },
       { name: "experience", label: "سنين الخبرة (اختياري)", kind: "number" },
       { name: "services", label: "الخدمات", kind: "checkbox", options: ["حقن ومحاليل", "غيار على الجروح", "رعاية مسنين", "رعاية بعد العمليات", "أخرى"] },
       { name: "home", label: "متاح لزيارات منزلية؟", kind: "radio", options: ["نعم", "لا"] },
+      { name: "availability", label: "المواعيد المتاحة (اختياري)", kind: "checkbox", options: ["صباحي", "مسائي", "ليلي", "24 ساعة / إقامة"] },
+      { name: "email", label: "الإيميل (اختياري)", kind: "email" },
+      { name: "source", label: "عرفتنا منين؟ (اختياري)", kind: "select", options: ["فيسبوك", "واتساب", "صديق", "دكتور زميل", "أخرى"] },
+      { name: "consent", label: "أوافق على عرض بياناتي المهنية (الاسم، التخصص، العنوان، رقم العيادة، المواعيد) على دليلك الطبي", kind: "consent", required: true },
     ],
   },
   company: {

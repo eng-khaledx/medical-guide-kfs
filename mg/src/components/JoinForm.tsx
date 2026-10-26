@@ -29,7 +29,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
     for (const f of config.fields.filter(visible)) {
       const [key, noteKey] = fieldLabels(f);
       let v = "", note = "";
-      if (f.kind === "checkbox") v = fd.getAll(f.name).map(String).join("، ");
+      if (f.kind === "checkbox" || f.kind === "areas") v = fd.getAll(f.name).map(String).join("، ");
       else if (f.kind === "specialty") {
         const s = String(fd.get(f.name) ?? "");
         v = s === OTHER ? String(fd.get(`${f.name}_other`) ?? "").trim() : s;
@@ -113,6 +113,12 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
           </>
         );
       }
+      case "areas":
+        return (
+          <div className="choices" role="group" aria-labelledby={`${id}-l`}>
+            {areas.map((a, i) => <label key={a.slug} className="choice"><input id={i === 0 ? id : undefined} type="checkbox" name={f.name} value={a.name} />{a.name}</label>)}
+          </div>
+        );
       case "radio": case "checkbox":
         return (
           <div className="choices" role="group" aria-labelledby={`${id}-l`}>
@@ -165,7 +171,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
       <div className="hp" aria-hidden="true"><label>لا تملأ هذا الحقل<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label></div>
       {config.fields.filter(visible).map((f) => {
         const id = `f-${f.name}`, err = errors[f.name];
-        const isGroup = f.kind === "radio" || f.kind === "checkbox" || f.kind === "schedule" || f.kind === "consent";
+        const isGroup = f.kind === "radio" || f.kind === "checkbox" || f.kind === "areas" || f.kind === "schedule" || f.kind === "consent";
         return (
           <div key={f.name} className="field">
             {f.kind !== "consent" && <label id={`${id}-l`} htmlFor={isGroup ? undefined : id}>{f.label}{f.required && " *"}</label>}
