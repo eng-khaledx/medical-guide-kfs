@@ -259,3 +259,4 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 .join-side .attach-note{background:#fff}
 .join-side-wa{display:flex;align-items:center;min-height:44px;margin-top:6px;color:var(--link);font-weight:600;text-decoration:underline}
 @media(min-width:960px){.join-layout{grid-template-columns:3fr 2fr;gap:24px}.join-side{position:sticky;top:88px;padding:20px}}
+.emergency-note{margin:10px 0 0;font-size:.875rem;color:var(--muted)}.emergency-note a{font-weight:800;color:#b42318;text-decoration:underline;padding:0 2px}

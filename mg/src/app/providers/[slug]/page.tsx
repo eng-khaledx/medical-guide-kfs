@@ -57,6 +57,7 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
         </div>
       </div>
       <ContactActions p={p} />
+      <p className="emergency-note">في الطوارئ اتصل بالإسعاف <a href="tel:123" dir="ltr">123</a></p>
       <div className="detail-grid">
         <section className="panel">
           {p.description && (<><h2>نبذة</h2><p>{p.description}</p></>)}
