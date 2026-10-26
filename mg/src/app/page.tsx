@@ -5,7 +5,7 @@ import Banners from "@/components/Banners";
 import Tile from "@/components/Tile";
 import ProviderCard from "@/components/ProviderCard";
 import OfferCard from "@/components/OfferCard";
-import { getActiveOffers, getAllTiles, getFeaturedProviders, getHomeTiles, popularSearches } from "@/lib/data";
+import { getActiveOffers, getAllTiles, getDoctors, getFeaturedProviders, getHomeTiles, popularSearches } from "@/lib/data";
 import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
 import { SITE } from "@/lib/site";
 
@@ -56,6 +56,7 @@ export default function Home() {
             <Link href="/search" className="more">عرض الكل</Link>
           </div>
           <div className="grid">{featured.map((p) => <ProviderCard key={p.id} p={p} />)}</div>
+          <Link className="btn btn-outline all-doctors-btn" href="/search">عرض كل الأطباء ({getDoctors().length}) ←</Link>
         </section>
       )}
 
