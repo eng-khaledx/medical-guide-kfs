@@ -23,18 +23,37 @@ export function getProviders(): Provider[] {
 export const getDoctors = () => getProviders().filter((p) => p.providerType === "DOCTOR");
 export const getProviderBySlug = (slug: string) => getProviders().find((p) => p.slug === slug);
 export const getProviderById = (id: string) => getProviders().find((p) => p.id === id);
-/** أطباء قسم الرئيسية: واحد من كل تخصص بترتيب homeTiles (المميز أولًا داخل التخصص)، ثم يكمل من تخصصات تانية لحد n. */
-export function getHomeDoctors(n = 8): Provider[] {
-  const docs = getDoctors();
-  const picked: Provider[] = [];
-  const take = (d?: Provider) => { if (d && !picked.includes(d)) picked.push(d); };
-  for (const t of homeTiles) {
-    if (!t.spec || picked.length >= n) continue;
-    const inSpec = docs.filter((d) => d.specialty === t.spec);
-    take(inSpec.find((d) => d.featured) ?? inSpec[0]);
-  }
-  for (const d of docs) { if (picked.length >= n) break; if (!picked.some((x) => x.specialty === d.specialty)) take(d); }
-  for (const d of docs) { if (picked.length >= n) break; take(d); }
+/** ترتيب أبجدي بالاسم (collation عربي) — يُستخدم كترتيب محايد داخل نفس مستوى الصلة وفي صفحات الأقسام والتخصصات. */
+const nameCollator = new Intl.Collator("ar", { sensitivity: "base" });
+export const byName = (a: Provider, b: Provider) => nameCollator.compare(a.name, b.name);
+
+/** تاريخ اليوم بتوقيت القاهرة بصيغة YYYY-MM-DD (يُستخدم كـ seed للتدوير اليومي). */
+export const cairoDateKey = (now = new Date()) => new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(now);
+
+/** رقم ثابت بين 0 و1 من نص (FNV-1a) — نفس المدخل يعطي نفس الناتج دائمًا. */
+function seeded(key: string) {
+  let h = 2166136261;
+  for (let i = 0; i < key.length; i++) { h ^= key.charCodeAt(i); h = Math.imul(h, 16777619); }
+  return (h >>> 0) / 4294967296;
+}
+
+/**
+ * أطباء قسم الرئيسية: n تخصصات مختلفة، طبيب واحد من كل تخصص. اختيار التخصصات والطبيب داخل كل تخصص بتدوير يومي ثابت
+ * (seed = تاريخ القاهرة) عشان كل الأطباء يظهروا مع الوقت؛ والعرض بترتيب homeTiles ثم باقي التخصصات.
+ * لا يستخدم حقل featured إطلاقًا.
+ */
+export function getHomeDoctors(n = 8, seed = cairoDateKey()): Provider[] {
+  const docs = getDoctors().sort(byName);
+  const tileOrder = homeTiles.flatMap((t) => (t.spec ? [t.spec] : []));
+  const order = (s: string) => { const i = tileOrder.indexOf(s); return i >= 0 ? i : 100 + specialties.findIndex((x) => x.slug === s); };
+  const specs = [...new Set(docs.map((d) => d.specialty).filter((s): s is string => !!s))];
+  const chosen = specs.sort((a, b) => seeded(`${seed}:s:${a}`) - seeded(`${seed}:s:${b}`)).slice(0, n).sort((a, b) => order(a) - order(b));
+  const picked = chosen.map((s) => {
+    const inSpec = docs.filter((d) => d.specialty === s);
+    return inSpec[Math.floor(seeded(`${seed}:${s}`) * inSpec.length)];
+  });
+  const rest = docs.filter((d) => !picked.includes(d)).sort((a, b) => seeded(`${seed}:${a.id}`) - seeded(`${seed}:${b.id}`));
+  for (const d of rest) { if (picked.length >= n) break; picked.push(d); }
   return picked;
 }
 export const getFeaturedProviders = () => getProviders().filter((p) => p.featured);
@@ -44,9 +63,9 @@ export const getCategories = (): Category[] => categories;
 export const getCategory = (slug: string) => categories.find((c) => c.slug === slug);
 export const getAreas = (): Area[] => areas;
 export const getArea = (slug?: string) => areas.find((a) => a.slug === slug);
-export const getProvidersByType = (t: ProviderType) => getProviders().filter((p) => p.providerType === t);
+export const getProvidersByType = (t: ProviderType) => getProviders().filter((p) => p.providerType === t).sort(byName);
 export const getProvidersBySpecialty = (slug: string) =>
-  getProviders().filter((p) => p.specialty === slug || p.specialties?.includes(slug));
+  getProviders().filter((p) => p.specialty === slug || p.specialties?.includes(slug)).sort(byName);
 
 const today = () => new Date().toISOString().slice(0, 10);
 const inRange = (s?: string, e?: string) => (!s || today() >= s) && (!e || today() <= e);
@@ -103,8 +122,8 @@ export function searchProviders(f: SearchFilters): Provider[] {
   if (showFeatured && f.featured) list = list.filter((p) => p.featured);
   const tokens = words((f.q ?? "").slice(0, 80));
   const feat = (p: Provider) => Number(showFeatured && !!p.featured);
-  if (!tokens.length) return [...list].sort((a, b) => feat(b) - feat(a));
-  // مستوى الصلة = أسوأ مستوى تطابقت عنده كلمات البحث (أقل رقم = أفضل)؛ ثم المميز؛ ثم الترتيب الحالي (الفرز مستقر)
+  if (!tokens.length) return [...list].sort((a, b) => feat(b) - feat(a) || byName(a, b));
+  // مستوى الصلة = أسوأ مستوى تطابقت عنده كلمات البحث (أقل رقم = أفضل)؛ ثم المميز (مطفي حاليًا)؛ ثم الاسم أبجديًا
   const ranked: { p: Provider; level: number }[] = [];
   for (const p of list) {
     const groups = searchGroups(p);
@@ -117,7 +136,7 @@ export function searchProviders(f: SearchFilters): Provider[] {
     }
     if (ok) ranked.push({ p, level });
   }
-  return ranked.sort((a, b) => a.level - b.level || feat(b.p) - feat(a.p)).map((r) => r.p);
+  return ranked.sort((a, b) => a.level - b.level || feat(b.p) - feat(a.p) || byName(a.p, b.p)).map((r) => r.p);
 }
 
 function allTiles() {

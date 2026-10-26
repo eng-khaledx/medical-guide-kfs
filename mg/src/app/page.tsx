@@ -9,6 +9,9 @@ import { getActiveOffers, getAllTiles, getDoctors, getHomeDoctors, getHomeTiles,
 import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
 import { SITE, showFeatured } from "@/lib/site";
 
+// ISR: الصفحة تتجدد كل ساعة عشان تدوير أطباء الرئيسية اليومي يتغير فعلًا (الموقع static)
+export const revalidate = 3600;
+
 export default function Home() {
   const featured = getHomeDoctors(8);
   const offers = getActiveOffers();
