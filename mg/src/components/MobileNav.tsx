@@ -5,7 +5,7 @@ import Icon from "./Icon";
 
 type NavLink = { href: string; label: string };
 
-export default function MobileNav({ links, waUrl, phone }: { links: NavLink[]; waUrl: string; phone: string }) {
+export default function MobileNav({ links, joinLinks, waUrl, phone }: { links: NavLink[]; joinLinks: NavLink[]; waUrl: string; phone: string }) {
   const [open, setOpen] = useState(false);
   const toggle = useRef<HTMLButtonElement>(null);
   const closeBtn = useRef<HTMLButtonElement>(null);
@@ -42,6 +42,8 @@ export default function MobileNav({ links, waUrl, phone }: { links: NavLink[]; w
           </button>
         </div>
         {links.map((l) => <Link key={l.label} href={l.href}>{l.label}</Link>)}
+        <p className="drawer-head-2">انضم إلينا</p>
+        {joinLinks.map((l) => <Link key={l.href} href={l.href}>{l.label}</Link>)}
         <a className="drawer-phone" href={`tel:${phone}`}><Icon name="phone" size={18} /><span dir="ltr">{phone}</span></a>
         <a className="drawer-cta" href={waUrl} target="_blank" rel="noopener noreferrer"><Icon name="chat" size={18} />تواصل معنا عبر واتساب</a>
       </nav>

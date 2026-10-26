@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { joinLinks } from "@/lib/join";
 import { SITE } from "@/lib/site";
 import { createWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -19,6 +20,10 @@ export default function Footer() {
           <Link href="/category/laboratories">معامل تحاليل</Link>
           <Link href="/category/radiology">أشعة</Link>
           <Link href="/search">كل الخدمات</Link>
+        </nav>
+        <nav aria-label="انضم إلينا" className="footer-links">
+          <strong className="footer-head">انضم إلينا</strong>
+          {joinLinks.map((l) => <Link key={l.href} href={l.href}>{l.label}</Link>)}
         </nav>
         <div className="footer-contact">
           <a href={`tel:${SITE.phoneLocal}`} dir="ltr">{SITE.phoneLocal}</a>

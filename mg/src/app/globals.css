@@ -191,7 +191,7 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 
 /* ---------- footer / fab ---------- */
 .site-footer{margin-top:32px;background:var(--soft);border-top:1px solid var(--line);padding:28px 0 16px}
-.footer-grid{display:grid;gap:20px}@media(min-width:760px){.footer-grid{grid-template-columns:1.4fr 1fr 1fr}}
+.footer-grid{display:grid;gap:20px}@media(min-width:760px){.footer-grid{grid-template-columns:1.4fr 1fr 1fr 1fr}}.footer-head{font-weight:800;min-height:36px;display:flex;align-items:center}
 .footer-links,.footer-contact{display:flex;flex-direction:column;gap:2px}
 .footer-links a,.footer-contact a{display:flex;align-items:center;min-height:44px}
 .footer-links a:hover,.footer-contact a:hover{color:var(--link)}
@@ -207,3 +207,13 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 
 .clear-filters{align-self:start;color:var(--navy);font-weight:600;font-size:.95rem;text-decoration:underline;padding:8px 0}
 .fee.fee-muted,.fee-muted{font-weight:400;color:var(--muted,#6b7280)}
+.drawer-head-2{margin:10px 14px 2px;font-weight:800;font-size:.9rem;color:var(--muted)}
+.join-page .panel{margin-top:16px;display:grid;gap:14px;max-width:560px}
+.field{display:flex;flex-direction:column;gap:6px}.field>label{font-weight:700}
+.field input[type=text],.field input[type=tel],.field input[type=email],.field select{font:inherit;font-size:1rem;min-height:48px;border:1px solid var(--line);border-radius:12px;padding:0 12px;background:#fff;color:var(--navy);width:100%}
+.field input[aria-invalid=true],.field select[aria-invalid=true]{border-color:#b42318}
+.field-err{color:#b42318;font-size:.875rem;margin:0}
+.choices{display:flex;flex-wrap:wrap;gap:8px}.choice{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:#fff;font-weight:600}
+.choice input{width:20px;height:20px;accent-color:var(--navy)}
+.join-form .btn{width:100%}
+.job-card{display:flex;flex-direction:column;gap:8px}.job-card h2{margin:0}

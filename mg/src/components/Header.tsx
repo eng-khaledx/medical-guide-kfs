@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import Icon from "./Icon";
 import MobileNav from "./MobileNav";
+import { joinLinks } from "@/lib/join";
 import { SITE } from "@/lib/site";
 import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
 import { getActiveOffers } from "@/lib/data";
@@ -36,7 +37,7 @@ export default function Header() {
         <a className="wa-mobile" href={wa} target="_blank" rel="noopener noreferrer" aria-label="تواصل عبر واتساب">
           <Icon name="chat" size={20} />
         </a>
-        <MobileNav links={links} waUrl={wa} phone={SITE.phoneLocal} />
+        <MobileNav links={links} joinLinks={joinLinks} waUrl={wa} phone={SITE.phoneLocal} />
       </div>
     </header>
   );
