@@ -26,12 +26,7 @@ export default function ProviderCard({ p }: { p: Provider }) {
       <h3><Link href={`/providers/${p.slug}`}>{p.name}</Link></h3>
       <p className="muted">{p.title ?? sub}</p>
       {area && <p className="muted small"><Icon name="pin" size={14} /> {area}</p>}
-      {p.subspecialties && p.subspecialties.length > 0 && (
-        <ul className="tags tags-sm">
-          {p.subspecialties.slice(0, 2).map((s) => <li key={s}>{s}</li>)}
-          {p.subspecialties.length > 2 && <li className="tag-more" aria-label={`و${p.subspecialties.length - 2} تخصصات أخرى`}>+{p.subspecialties.length - 2}</li>}
-        </ul>
-      )}
+      {p.subspecialties && p.subspecialties.length > 0 && <ul className="tags tags-sm">{p.subspecialties.slice(0, 2).map((s) => <li key={s} title={s}>{s}</li>)}</ul>}
       {p.services && p.services.length > 0 && <p className="small services">{p.services.slice(0, 3).join(" • ")}</p>}
       <div className="pcard-actions">
         <Link className="btn btn-ghost" href={`/providers/${p.slug}`}>عرض الملف</Link>

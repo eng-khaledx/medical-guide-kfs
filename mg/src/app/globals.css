@@ -264,9 +264,12 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 /* بطاقات الأطباء: بديل الصورة بحرف بلون التخصص، شارة +N، وارتفاع موحد */
 .avatar-fill{position:absolute;inset:0;display:grid;place-items:center;font-size:2rem;font-weight:800;line-height:1}
 .avatar-lg .avatar-fill{font-size:2.8rem}
-.tags li.tag-more{background:var(--light);font-weight:700}
+/* شارات البطاقة: سطر واحد فقط، والشارة الطويلة تتقص بـ ... */
+.tags-sm{flex-wrap:nowrap;gap:6px;width:100%;max-width:100%;min-width:0;overflow:hidden}.tags-sm li{flex:0 1 auto;min-width:0;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .grid{align-items:stretch}.pcard{height:100%}
 /* قسم الرئيسية: 4 موبايل، 6 تابلت/لاب صغير، 8 من 1200px — بدون صف أخير ناقص */
-.home-doctors>*:nth-child(n+5){display:none}
-@media(min-width:600px){.home-doctors>*:nth-child(-n+6){display:flex}}
-@media(min-width:1200px){.home-doctors>*{display:flex}}
+/* نفس breakpoints أعمدة .grid (600 / 960 / 1200): كل القواعد بنفس الـ specificity والترتيب هو اللي بيحسم */
+.home-doctors>*{display:none}
+.home-doctors>*:nth-child(-n+4){display:flex}                      /* <600: عمود واحد → 4 */
+@media(min-width:600px){.home-doctors>*:nth-child(-n+6){display:flex}}   /* 600–1199: عمودين أو 3 → 6 */
+@media(min-width:1200px){.home-doctors>*:nth-child(-n+8){display:flex}}  /* ≥1200: 4 أعمدة → 8 */
