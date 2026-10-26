@@ -229,3 +229,4 @@ body:has(.sticky-contact) .bottom-bar{display:none}
 .choice.consent{align-items:flex-start;padding:10px 14px;line-height:1.6}.choice.consent input{margin-top:3px;flex:none}
 .attach-note{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:0;line-height:1.7;font-weight:600}
 .join-form .muted a{color:var(--link);text-decoration:underline}
+.locate-btn{width:100%;min-height:48px;font-size:.95rem}.geo-msg{margin:0;font-size:.9rem;color:#b42318;line-height:1.6}.geo-msg.geo-ok{color:#0b7a3b}

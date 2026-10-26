@@ -52,10 +52,12 @@ export const joinConfigs: Record<string, JoinConfig> = {
       { name: "specialty", label: "التخصص", kind: "specialty", required: true },
       { name: "subspecialty", label: "التخصص الدقيق (اختياري)", kind: "text" },
       { ...mobile, label: "الموبايل الشخصي" },
+      { name: "email", label: "الإيميل (اختياري)", kind: "email" },
       { name: "clinicPhone", label: "رقم العيادة للحجز (اختياري)", kind: "tel", landline: true, placeholder: "موبايل أو أرضي" },
       { ...area, required: true },
       { name: "address", label: "العنوان بالتفصيل", kind: "textarea", required: true, placeholder: "الشارع، أقرب علامة مميزة، الدور" },
       { name: "mapUrl", label: "لينك جوجل ماب (اختياري)", kind: "mapurl" },
+      { name: "serviceType", label: "نوع الخدمة", kind: "checkbox", required: true, options: ["كشف في العيادة", "زيارة منزلية", "استشارة أونلاين"] },
       { name: "schedule", label: "أيام ومواعيد العمل (اختياري)", kind: "schedule" },
       { name: "price", label: "سعر الكشف (اختياري)", kind: "number", max: 100000 },
       { name: "source", label: "عرفتنا منين؟ (اختياري)", kind: "select", options: ["فيسبوك", "واتساب", "صديق", "دكتور زميل", "أخرى"] },
@@ -122,6 +124,7 @@ export function validateJoin(type: unknown, fields: unknown): { ok: true; fields
     if (v.length > max || note.length > MAX_FIELD_LENGTH) return { ok: false, error: `too long: ${label}` };
     if (f.required && !v) return { ok: false, error: `required: ${label}` };
     if (v && f.kind === "tel" && !(MOBILE_RE.test(v) || (f.landline && LANDLINE_RE.test(v)))) return { ok: false, error: `bad phone: ${label}` };
+    if (v && f.kind === "email" && !/^\S+@\S+\.\S+$/.test(v)) return { ok: false, error: `bad email: ${label}` };
     if (v && f.kind === "mapurl" && !isMapUrl(v)) return { ok: false, error: `bad map link: ${label}` };
     if (v && f.kind === "number" && !(/^\d+$/.test(v) && Number(v) <= (f.max ?? 60))) return { ok: false, error: `bad number: ${label}` };
     if (v) out[label] = v;

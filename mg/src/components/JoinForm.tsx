@@ -11,6 +11,7 @@ const ATTACH_MESSAGE = "📎 هبعت في نفس الشات: صورة شخصي�
 export default function JoinForm({ config, areas, specialties = [] }: { config: JoinConfig; areas: { slug: string; name: string }[]; specialties?: string[] }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [otherSpecialty, setOtherSpecialty] = useState(false);
+  const [geo, setGeo] = useState<{ busy: boolean; msg: string; ok?: boolean }>({ busy: false, msg: "" });
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -67,6 +68,25 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
     } catch { /* تجاهل */ }
   }
 
+  function locateMe(id: string) {
+    if (!("geolocation" in navigator)) { setGeo({ busy: false, msg: "المتصفح ده مش بيدعم تحديد الموقع. الصق لينك جوجل ماب بإيدك." }); return; }
+    setGeo({ busy: true, msg: "بنحدد موقعك..." });
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const input = document.getElementById(id) as HTMLInputElement | null;
+        if (input) input.value = `https://www.google.com/maps?q=${pos.coords.latitude.toFixed(6)},${pos.coords.longitude.toFixed(6)}`;
+        setGeo({ busy: false, ok: true, msg: "تم تحديد موقعك. راجع اللينك قبل الإرسال." });
+      },
+      (err) => setGeo({
+        busy: false,
+        msg: err.code === err.PERMISSION_DENIED ? "مقدرناش نوصل لموقعك لأنك رفضت الإذن. فعّل إذن الموقع للمتصفح أو الصق لينك جوجل ماب بإيدك."
+          : err.code === err.TIMEOUT ? "تحديد الموقع أخد وقت طويل. جرّب تاني أو الصق اللينك بإيدك."
+          : "الموقع غير متاح دلوقتي (تأكد إن الـGPS شغال). الصق لينك جوجل ماب بإيدك.",
+      }),
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 },
+    );
+  }
+
   function renderControl(f: JoinField, id: string, err?: string): React.ReactNode {
     const common = { id, name: f.name, "aria-invalid": !!err, "aria-describedby": err ? `${id}-err` : undefined };
     switch (f.kind) {
@@ -106,12 +126,20 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
         );
       case "consent":
         return <label className="choice consent"><input id={id} type="checkbox" name={f.name} value="1" aria-invalid={!!err} />{f.label}</label>;
+      case "mapurl":
+        return (
+          <>
+            <input {...common} type="url" dir="ltr" autoComplete="off" maxLength={300} placeholder="https://maps.app.goo.gl/..." />
+            <button type="button" className="btn btn-ghost locate-btn" disabled={geo.busy} onClick={() => locateMe(id)}>📍 استخدم موقعي الحالي (وانت في العيادة)</button>
+            {geo.msg && <p className={geo.ok ? "geo-msg geo-ok" : "geo-msg"} role="status">{geo.msg}</p>}
+          </>
+        );
       case "number":
         return <input {...common} type="text" inputMode="numeric" autoComplete="off" maxLength={8} />;
       default:
-        return <input {...common} type={f.kind === "mapurl" ? "url" : f.kind} inputMode={f.kind === "tel" ? "tel" : undefined}
-          dir={f.kind === "tel" || f.kind === "email" || f.kind === "mapurl" ? "ltr" : undefined} placeholder={"placeholder" in f ? f.placeholder : undefined}
-          autoComplete={f.kind === "tel" ? "tel" : "off"} maxLength={f.kind === "mapurl" ? 300 : 80} />;
+        return <input {...common} type={f.kind} inputMode={f.kind === "tel" ? "tel" : undefined}
+          dir={f.kind === "tel" || f.kind === "email" ? "ltr" : undefined} placeholder={"placeholder" in f ? f.placeholder : undefined}
+          autoComplete={f.kind === "tel" ? "tel" : "off"} maxLength={80} />;
     }
   }
 
