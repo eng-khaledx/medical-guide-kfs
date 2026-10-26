@@ -16,7 +16,7 @@ export default function ContactActions({ p }: { p: Provider }) {
     <div className="contact-actions">
       <TrackedLink event="call_click" {...t} className="btn btn-primary" href={`tel:${c.phone}`}><Icon name="phone" size={18} />{callLabel}</TrackedLink>
       <TrackedLink event="whatsapp_click" {...t} className="btn btn-wa" href={wa} target="_blank" rel="noopener noreferrer"><Icon name="chat" size={18} />{waLabel}</TrackedLink>
-      <TrackedLink event="whatsapp_click" {...t} className="btn btn-ghost" href={createWhatsAppUrl({ phone: c.whatsapp, message: MSG.booking(p.name) })} target="_blank" rel="noopener noreferrer">طلب حجز / استفسار</TrackedLink>
+      <TrackedLink event="whatsapp_click" {...t} className="btn btn-ghost" href={createWhatsAppUrl({ phone: c.whatsapp, message: MSG.about(p.name) })} target="_blank" rel="noopener noreferrer">استفسار</TrackedLink>
       {safeDirections && <a className="btn btn-ghost" href={safeDirections} target="_blank" rel="noopener noreferrer"><Icon name="nav" size={18} />الاتجاهات</a>}
     </div>
     <div className="sticky-contact">

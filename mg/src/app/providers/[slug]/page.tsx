@@ -7,7 +7,7 @@ import Icon from "@/components/Icon";
 import ContactActions from "@/components/ContactActions";
 import OfferCard from "@/components/OfferCard";
 import { MSG, createWhatsAppUrl } from "@/lib/whatsapp";
-import { getActiveOffers, getArea, getProviderBySlug, getProviders, getSpecialty, typeLabel } from "@/lib/data";
+import { getActiveOffers, getArea, getCategories, getProviderBySlug, getProviders, getSpecialty, typeLabel } from "@/lib/data";
 import { GUIDE_CONTACT_NUMBER, SITE, getFeeDisplay, showFeatured } from "@/lib/site";
 
 export const dynamicParams = false;
@@ -30,6 +30,10 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
   const area = getArea(p.area)?.name;
   const img = p.image ?? p.logo;
   const offers = getActiveOffers().filter((o) => o.providerId === p.id);
+  // مسار التصفح: التخصص الرئيسي للطبيب، وإلا اسم القسم حسب النوع
+  const cat = getCategories().find((c) => c.type === p.providerType);
+  const spec = p.providerType === "DOCTOR" ? getSpecialty(p.specialty) : undefined;
+  const crumb = spec ? { label: spec.name, href: `/specialties/${spec.slug}` } : { label: cat?.name ?? "الخدمات", href: cat ? `/category/${cat.slug}` : "/search" };
   const fee = getFeeDisplay(p);
   const addr = [area, p.address].filter(Boolean).join(" - ") || undefined;
   const rows: [string, React.ReactNode][] = [
@@ -45,7 +49,7 @@ export default function ProviderPage({ params }: { params: { slug: string } }) {
   return (
     <div className="container section">
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(ld) }} />
-      <nav className="crumbs" aria-label="مسار التصفح"><Link href="/">الرئيسية</Link> / <Link href="/search">الخدمات</Link> / <span>{p.name}</span></nav>
+      <nav className="crumbs" aria-label="مسار التصفح"><Link href="/">الرئيسية</Link> / <Link href={crumb.href}>{crumb.label}</Link> / <span>{p.name}</span></nav>
       <div className="profile">
         <div className="avatar avatar-lg">{img ? <Image src={img} alt={p.name} fill sizes="120px" style={{ objectFit: "cover" }} /> : <AvatarFallback p={p} iconSize={44} />}</div>
         <div>
