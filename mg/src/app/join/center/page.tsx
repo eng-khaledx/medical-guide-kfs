@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import JoinForm from "@/components/JoinForm";
 import JoinHero from "@/components/JoinHero";
+import JoinSide from "@/components/JoinSide";
 import { getAreas } from "@/lib/data";
 import { joinConfigs } from "@/lib/join";
 
@@ -10,9 +11,11 @@ export const metadata: Metadata = { title: config.title, description: config.int
 export default function Page() {
   return (
     <div className="container section join-page">
-      <JoinHero icon="building" title={config.title} />
-      <p className="muted">{config.intro}</p>
-      <JoinForm config={config} areas={getAreas()} />
+      <JoinHero icon="building" title={config.title} subtitle={config.intro} />
+      <div className="join-layout">
+        <JoinForm config={config} areas={getAreas()} />
+        <JoinSide config={config} />
+      </div>
     </div>
   );
 }

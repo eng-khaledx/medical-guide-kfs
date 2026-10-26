@@ -121,7 +121,7 @@ export const joinConfigs: Record<string, JoinConfig> = {
       name("الاسم"),
       { name: "gender", label: "النوع", kind: "radio", options: ["ممرض", "ممرضة"] },
       { name: "qualification", label: "المؤهل", kind: "select", required: true, options: ["دبلوم تمريض", "معهد فني تمريض", "بكالوريوس تمريض", "أخرى"] },
-      mobile, area,
+      mobile, { ...area, label: "منطقة السكن" },
       { name: "coverage", label: "المناطق اللي تقدر تروحها", kind: "areas", required: true },
       { name: "experience", label: "سنين الخبرة (اختياري)", kind: "number" },
       { name: "services", label: "الخدمات", kind: "checkbox", options: ["حقن ومحاليل", "غيار على الجروح", "رعاية مسنين", "رعاية بعد العمليات", "أخرى"] },

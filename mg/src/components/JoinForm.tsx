@@ -173,7 +173,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
         const id = `f-${f.name}`, err = errors[f.name];
         const isGroup = f.kind === "radio" || f.kind === "checkbox" || f.kind === "areas" || f.kind === "schedule" || f.kind === "consent";
         return (
-          <div key={f.name} className="field">
+          <div key={f.name} className="join-field">
             {f.kind !== "consent" && <label id={`${id}-l`} htmlFor={isGroup ? undefined : id}>{f.label}{f.required && " *"}</label>}
             {renderControl(f, id, err)}
             {err && <p id={`${id}-err`} className="field-err" role="alert">{err}</p>}
