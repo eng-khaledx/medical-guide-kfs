@@ -17,7 +17,8 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
   const [open24, setOpen24] = useState(false);
   // قيم حقول الـ select الحالية (لإظهار الحقول المشروطة بـ showIf)
   const [sel, setSel] = useState<Record<string, string>>({});
-  const visible = (f: JoinField) => !f.showIf || sel[f.showIf.field] === f.showIf.value;
+  const watched = new Set(config.fields.flatMap((f) => (f.showIf ? [f.showIf.field] : [])));
+  const visible = (f: JoinField) => !f.showIf || (f.showIf.gt !== undefined ? Number(toLatin(sel[f.showIf.field] ?? "")) > f.showIf.gt : sel[f.showIf.field] === f.showIf.value);
   const [geo, setGeo] = useState<{ busy: boolean; msg: string; ok?: boolean }>({ busy: false, msg: "" });
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -151,7 +152,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
           </>
         );
       case "number":
-        return <input {...common} type="text" inputMode="numeric" autoComplete="off" maxLength={8} />;
+        return <input {...common} type="text" inputMode="numeric" autoComplete="off" maxLength={8} defaultValue={f.defaultValue} />;
       default:
         return <input {...common} type={f.kind} inputMode={f.kind === "tel" ? "tel" : undefined}
           dir={f.kind === "tel" || f.kind === "email" ? "ltr" : undefined} placeholder={"placeholder" in f ? f.placeholder : undefined}
@@ -160,7 +161,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
   }
 
   return (
-    <form className="join-form panel" onSubmit={onSubmit} noValidate onChange={(e) => { const el = e.target as HTMLSelectElement; if (el.tagName === "SELECT") setSel((s) => ({ ...s, [el.name]: el.value })); }}>
+    <form className="join-form panel" onSubmit={onSubmit} noValidate onChange={(e) => { const el = e.target as HTMLSelectElement; if (watched.has(el.name)) setSel((s) => ({ ...s, [el.name]: el.value })); }}>
       <div className="hp" aria-hidden="true"><label>لا تملأ هذا الحقل<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label></div>
       {config.fields.filter(visible).map((f) => {
         const id = `f-${f.name}`, err = errors[f.name];

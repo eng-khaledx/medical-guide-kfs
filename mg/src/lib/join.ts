@@ -1,5 +1,5 @@
 /** showIf: يظهر الحقل فقط لما حقل select آخر (باسمه) يساوي قيمة معينة. allow24: حقل المواعيد يقبل "شغال 24 ساعة". */
-interface FieldExtras { showIf?: { field: string; value: string }; allow24?: boolean }
+interface FieldExtras { showIf?: { field: string; value?: string; gt?: number }; allow24?: boolean; defaultValue?: string }
 export type JoinField = FieldExtras &
 (
   | { name: string; label: string; kind: "text" | "email"; required?: boolean; placeholder?: string }
@@ -56,6 +56,8 @@ const placeCommon: JoinField[] = [
   { name: "landline", label: "رقم التليفون الأرضي / رقم الحجز (اختياري)", kind: "tel", landline: true, placeholder: "موبايل أو أرضي" },
   { ...area, required: true },
   { name: "address", label: "العنوان بالتفصيل", kind: "textarea", required: true, placeholder: "الشارع، أقرب علامة مميزة، الدور" },
+  { name: "branches", label: "عدد الفروع (اختياري)", kind: "number", max: 50, defaultValue: "1" },
+  { name: "otherBranches", label: "عناوين الفروع التانية (اختياري)", kind: "textarea", placeholder: "كل فرع في سطر: المنطقة - العنوان", showIf: { field: "branches", gt: 1 } },
   { name: "mapUrl", label: "لينك جوجل ماب (اختياري)", kind: "mapurl" },
   { name: "schedule", label: "مواعيد العمل (اختياري)", kind: "schedule", allow24: true },
   { name: "services", label: "الخدمات (اختياري)", kind: "text", placeholder: "مثال: تحاليل دم، سونار، أشعة عادية" },
