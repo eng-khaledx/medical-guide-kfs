@@ -14,6 +14,10 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
   const renderedAt = useRef(0);
   useEffect(() => { renderedAt.current = Date.now(); }, []);
   const [otherSpecialty, setOtherSpecialty] = useState(false);
+  const [open24, setOpen24] = useState(false);
+  // قيم حقول الـ select الحالية (لإظهار الحقول المشروطة بـ showIf)
+  const [sel, setSel] = useState<Record<string, string>>({});
+  const visible = (f: JoinField) => !f.showIf || sel[f.showIf.field] === f.showIf.value;
   const [geo, setGeo] = useState<{ busy: boolean; msg: string; ok?: boolean }>({ busy: false, msg: "" });
 
   function onSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -21,7 +25,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
     const fd = new FormData(e.currentTarget);
     const errs: Record<string, string> = {};
     const data: Record<string, string> = {};
-    for (const f of config.fields) {
+    for (const f of config.fields.filter(visible)) {
       const [key, noteKey] = fieldLabels(f);
       let v = "", note = "";
       if (f.kind === "checkbox") v = fd.getAll(f.name).map(String).join("، ");
@@ -31,9 +35,10 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
         if (s === OTHER && !v) errs[f.name] = "اكتب التخصص";
       } else if (f.kind === "schedule") {
         const from = String(fd.get(`${f.name}_from`) ?? ""), to = String(fd.get(`${f.name}_to`) ?? "");
-        v = formatSchedule(fd.getAll(`${f.name}_days`).map(String), from, to);
+        const all24 = !!fd.get(`${f.name}_24`);
+        v = all24 ? "شغال 24 ساعة" : formatSchedule(fd.getAll(`${f.name}_days`).map(String), from, to);
         note = String(fd.get(`${f.name}_note`) ?? "").trim();
-        if (!from !== !to) errs[f.name] = "اختار وقت البداية والنهاية مع بعض";
+        if (!all24 && !from !== !to) errs[f.name] = "اختار وقت البداية والنهاية مع بعض";
       } else if (f.kind === "consent") v = fd.get(f.name) ? "موافق" : "";
       else v = String(fd.get(f.name) ?? "").trim();
 
@@ -58,7 +63,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
     const message = [
       `مرحبًا، أرغب في الانضمام إلى دليلك الطبي بكفرالشيخ (${config.role}).`, "",
       ...Object.entries(data).map(([k, val]) => `${k}: ${val}`),
-      ...(config.attachNote ? ["", ATTACH_MESSAGE] : []),
+      ...(config.attachNote ? ["", ATTACH_MESSAGE] : config.attach ? ["", config.attach.message] : []),
     ].join("\n");
     // واتساب أولًا وبشكل متزامن داخل حدث الضغط حتى لا يمنعه المتصفح
     window.open(createWhatsAppUrl({ phone: GUIDE_CONTACT_NUMBER.whatsapp, message }), "_blank", "noopener,noreferrer");
@@ -118,13 +123,20 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
       case "schedule":
         return (
           <div className="schedule">
-            <div className="choices" role="group" aria-label="الأيام">
-              {DAYS.map((d, i) => <label key={d} className="choice"><input id={i === 0 ? id : undefined} type="checkbox" name={`${f.name}_days`} value={d} />{d}</label>)}
-            </div>
-            <div className="time-row">
-              <label>من<select name={`${f.name}_from`} defaultValue=""><option value="">اختر</option>{HOURS.map((h) => <option key={h} value={h}>{h}</option>)}</select></label>
-              <label>إلى<select name={`${f.name}_to`} defaultValue=""><option value="">اختر</option>{HOURS.map((h) => <option key={h} value={h}>{h}</option>)}</select></label>
-            </div>
+            {f.allow24 && (
+              <label className="choice"><input type="checkbox" name={`${f.name}_24`} value="1" checked={open24} onChange={(e) => setOpen24(e.target.checked)} />شغال 24 ساعة</label>
+            )}
+            {!open24 && (
+              <>
+                <div className="choices" role="group" aria-label="الأيام">
+                  {DAYS.map((d, i) => <label key={d} className="choice"><input id={i === 0 ? id : undefined} type="checkbox" name={`${f.name}_days`} value={d} />{d}</label>)}
+                </div>
+                <div className="time-row">
+                  <label>من<select name={`${f.name}_from`} defaultValue=""><option value="">اختر</option>{HOURS.map((h) => <option key={h} value={h}>{h}</option>)}</select></label>
+                  <label>إلى<select name={`${f.name}_to`} defaultValue=""><option value="">اختر</option>{HOURS.map((h) => <option key={h} value={h}>{h}</option>)}</select></label>
+                </div>
+              </>
+            )}
             <input type="text" name={`${f.name}_note`} placeholder={`${SCHEDULE_NOTE_LABEL}: مثال: الخميس بالحجز المسبق`} maxLength={200} autoComplete="off" aria-label={SCHEDULE_NOTE_LABEL} />
           </div>
         );
@@ -148,9 +160,9 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
   }
 
   return (
-    <form className="join-form panel" onSubmit={onSubmit} noValidate>
+    <form className="join-form panel" onSubmit={onSubmit} noValidate onChange={(e) => { const el = e.target as HTMLSelectElement; if (el.tagName === "SELECT") setSel((s) => ({ ...s, [el.name]: el.value })); }}>
       <div className="hp" aria-hidden="true"><label>لا تملأ هذا الحقل<input type="text" name="website" tabIndex={-1} autoComplete="off" /></label></div>
-      {config.fields.map((f) => {
+      {config.fields.filter(visible).map((f) => {
         const id = `f-${f.name}`, err = errors[f.name];
         const isGroup = f.kind === "radio" || f.kind === "checkbox" || f.kind === "schedule" || f.kind === "consent";
         return (
@@ -162,6 +174,7 @@ export default function JoinForm({ config, areas, specialties = [] }: { config: 
         );
       })}
       {config.attachNote && <p className="attach-note">📎 {ATTACH_NOTE}</p>}
+      {config.attach && <p className="attach-note">📎 {config.attach.note}</p>}
       <button className="btn btn-wa" type="submit">إرسال عبر واتساب</button>
       <p className="muted small">هنحفظ <Link href="/privacy">بياناتك</Link> عندنا عشان نراجع الطلب، ومش هتظهر على الموقع غير بعد موافقتك. هنتواصل معاك خلال 48 ساعة.</p>
     </form>

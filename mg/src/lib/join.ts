@@ -1,11 +1,15 @@
-export type JoinField =
+/** showIf: يظهر الحقل فقط لما حقل select آخر (باسمه) يساوي قيمة معينة. allow24: حقل المواعيد يقبل "شغال 24 ساعة". */
+interface FieldExtras { showIf?: { field: string; value: string }; allow24?: boolean }
+export type JoinField = FieldExtras &
+(
   | { name: string; label: string; kind: "text" | "email"; required?: boolean; placeholder?: string }
   | { name: string; label: string; kind: "tel"; required?: boolean; placeholder?: string; landline?: boolean }
   | { name: string; label: string; kind: "number"; required?: boolean; max?: number }
   | { name: string; label: string; kind: "textarea" | "mapurl" | "area" | "specialty" | "schedule" | "consent"; required?: boolean; placeholder?: string }
-  | { name: string; label: string; kind: "select" | "radio" | "checkbox"; options: string[]; required?: boolean };
+  | { name: string; label: string; kind: "select" | "radio" | "checkbox"; options: string[]; required?: boolean });
 
-export interface JoinConfig { slug: string; role: string; title: string; intro: string; fields: JoinField[]; attachNote?: boolean }
+/** attach: نص تنبيه الصور وسطر رسالة واتساب لنماذج غير الطبيب (الطبيب يستخدم attachNote). */
+export interface JoinConfig { slug: string; role: string; title: string; intro: string; fields: JoinField[]; attachNote?: boolean; attach?: { note: string; message: string } }
 
 export const OTHER = "أخرى";
 export const DAYS = ["السبت", "الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة"];
@@ -41,6 +45,27 @@ const name = (label: string): JoinField => ({ name: "name", label, kind: "text",
 const mobile: JoinField = { name: "mobile", label: "الموبايل", kind: "tel", required: true, placeholder: "01xxxxxxxxx" };
 const area: JoinField = { name: "area", label: "المنطقة", kind: "area" };
 
+const placeAttach = {
+  note: "بعد ما الواتساب يفتح، ابعت في نفس الشات: صور المكان وصورة الترخيص للتوثيق.",
+  message: "📎 هبعت في نفس الشات: صور المكان وصورة الترخيص للتوثيق.",
+};
+/** الحقول المشتركة بين المعمل والمركز بعد "النوع" وقبل الحقول الخاصة بكل نوع. */
+const placeCommon: JoinField[] = [
+  { name: "contact", label: "اسم المسؤول", kind: "text", required: true },
+  mobile,
+  { name: "landline", label: "رقم التليفون الأرضي / رقم الحجز (اختياري)", kind: "tel", landline: true, placeholder: "موبايل أو أرضي" },
+  { ...area, required: true },
+  { name: "address", label: "العنوان بالتفصيل", kind: "textarea", required: true, placeholder: "الشارع، أقرب علامة مميزة، الدور" },
+  { name: "mapUrl", label: "لينك جوجل ماب (اختياري)", kind: "mapurl" },
+  { name: "schedule", label: "مواعيد العمل (اختياري)", kind: "schedule", allow24: true },
+  { name: "services", label: "الخدمات (اختياري)", kind: "text", placeholder: "مثال: تحاليل دم، سونار، أشعة عادية" },
+];
+const placeTail: JoinField[] = [
+  { name: "email", label: "الإيميل (اختياري)", kind: "email" },
+  { name: "source", label: "عرفتنا منين؟ (اختياري)", kind: "select", options: ["فيسبوك", "واتساب", "صديق", "دكتور زميل", "أخرى"] },
+  { name: "consent", label: "أوافق على عرض بيانات المكان (الاسم، النوع، العنوان، أرقام التواصل، المواعيد) على دليلك الطبي", kind: "consent", required: true },
+];
+
 export const joinConfigs: Record<string, JoinConfig> = {
   doctor: {
     slug: "doctor", role: "طبيب", title: "انضم كطبيب", intro: "سجّل بياناتك وهنتواصل معاك على واتساب لإضافتك للدليل.",
@@ -65,12 +90,27 @@ export const joinConfigs: Record<string, JoinConfig> = {
     ],
   },
   lab: {
-    slug: "lab", role: "معمل", title: "انضم كمعمل", intro: "سجّل بيانات المعمل وهنتواصل معاك على واتساب.",
-    fields: [name("اسم المعمل"), { name: "contact", label: "اسم المسؤول", kind: "text" }, mobile, area, { name: "address", label: "العنوان (اختياري)", kind: "text" }],
+    slug: "lab", role: "معمل", title: "انضم كمعمل", intro: "سجّل بيانات المعمل أو مركز الأشعة وهنتواصل معاك على واتساب.",
+    attach: placeAttach,
+    fields: [
+      name("اسم المكان"),
+      { name: "placeType", label: "النوع", kind: "select", required: true, options: ["معمل تحاليل", "مركز أشعة", "تحاليل وأشعة"] },
+      ...placeCommon,
+      { name: "homeSampling", label: "سحب عينات من البيت؟", kind: "radio", options: ["نعم", "لا"] },
+      { name: "onlineResults", label: "نتايج أونلاين؟", kind: "radio", options: ["نعم", "لا"] },
+      ...placeTail,
+    ],
   },
   center: {
-    slug: "center", role: "مركز", title: "انضم كمركز", intro: "للمراكز الطبية والأشعة والعيادات المتخصصة.",
-    fields: [name("اسم المركز"), { name: "centerType", label: "نوع المركز", kind: "select", options: ["مركز طبي", "مركز أشعة", "مركز أسنان", "مركز علاج طبيعي", "أخرى"] }, { name: "contact", label: "اسم المسؤول", kind: "text" }, mobile, area],
+    slug: "center", role: "مركز", title: "انضم كمركز", intro: "للمراكز الطبية والمستشفيات والصيدليات.",
+    attach: placeAttach,
+    fields: [
+      name("اسم المكان"),
+      { name: "placeType", label: "النوع", kind: "select", required: true, options: ["مركز طبي", "مستشفى", "صيدلية", "أخرى"] },
+      ...placeCommon,
+      { name: "delivery", label: "توصيل للبيت؟", kind: "radio", options: ["نعم", "لا"], showIf: { field: "placeType", value: "صيدلية" } },
+      ...placeTail,
+    ],
   },
   nurse: {
     slug: "nurse", role: "ممرض/ممرضة", title: "انضم كممرض/ممرضة", intro: "سجّل بياناتك وهنتواصل معاك على واتساب.",
@@ -122,7 +162,7 @@ export function validateJoin(type: unknown, fields: unknown): { ok: true; fields
     if (v === null || note === null) return { ok: false, error: `bad value: ${label}` };
     const max = f.kind === "textarea" || f.kind === "schedule" ? MAX_TEXT_LENGTH : MAX_FIELD_LENGTH;
     if (v.length > max || note.length > MAX_FIELD_LENGTH) return { ok: false, error: `too long: ${label}` };
-    if (f.required && !v) return { ok: false, error: `required: ${label}` };
+    if (f.required && !f.showIf && !v) return { ok: false, error: `required: ${label}` };
     if (v && f.kind === "tel" && !(MOBILE_RE.test(v) || (f.landline && LANDLINE_RE.test(v)))) return { ok: false, error: `bad phone: ${label}` };
     if (v && f.kind === "email" && !/^\S+@\S+\.\S+$/.test(v)) return { ok: false, error: `bad email: ${label}` };
     if (v && f.kind === "mapurl" && !isMapUrl(v)) return { ok: false, error: `bad map link: ${label}` };
