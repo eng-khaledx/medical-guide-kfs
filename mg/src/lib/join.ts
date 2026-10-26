@@ -129,7 +129,7 @@ export const joinConfigs: Record<string, JoinConfig> = {
       { name: "availability", label: "المواعيد المتاحة (اختياري)", kind: "checkbox", options: ["صباحي", "مسائي", "ليلي", "24 ساعة / إقامة"] },
       { name: "email", label: "الإيميل (اختياري)", kind: "email" },
       { name: "source", label: "عرفتنا منين؟ (اختياري)", kind: "select", options: ["فيسبوك", "واتساب", "صديق", "دكتور زميل", "أخرى"] },
-      { name: "consent", label: "أوافق على عرض بياناتي المهنية (الاسم، التخصص، العنوان، رقم العيادة، المواعيد) على دليلك الطبي", kind: "consent", required: true },
+      { name: "consent", label: "أوافق على عرض بياناتي المهنية (الاسم، المؤهل، الخدمات، المناطق اللي بغطيها، المواعيد المتاحة) على دليلك الطبي، وعلى إن فريق الدليل يتواصل معايا بخصوص الطلب. رقم الموبايل مش هيظهر للعامة.", kind: "consent", required: true },
     ],
   },
   company: {
