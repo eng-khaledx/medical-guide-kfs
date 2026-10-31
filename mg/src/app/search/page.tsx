@@ -7,11 +7,17 @@ import ProviderCard from "@/components/ProviderCard";
 import EmptyState from "@/components/EmptyState";
 import { categories } from "@/data/categories";
 import { showFeatured } from "@/lib/site";
+import { searchHeading, resultCount } from "@/lib/searchText";
 import { getArea, getAreas, getSpecialties, searchProviders } from "@/lib/data";
 
-export const metadata: Metadata = { title: "نتائج البحث", robots: { index: false } };
 type SP = { q?: string; area?: string; type?: string; specialty?: string; featured?: string };
 const one = (v: unknown) => (typeof v === "string" ? v.slice(0, 80) : "");
+const filtersOf = (sp: SP) => ({ q: one(sp.q), area: one(sp.area), type: one(sp.type), specialty: one(sp.specialty) });
+
+export function generateMetadata({ searchParams }: { searchParams: SP }): Metadata {
+  const heading = searchHeading(filtersOf(searchParams));
+  return { title: heading, description: `${heading} على دليلك الطبي بكفرالشيخ.`, robots: { index: false } };
+}
 
 export default function SearchPage({ searchParams }: { searchParams: SP }) {
   const q = one(searchParams.q), area = one(searchParams.area), type = one(searchParams.type);
@@ -23,8 +29,8 @@ export default function SearchPage({ searchParams }: { searchParams: SP }) {
   const kfsHref = `/search?${new URLSearchParams(Object.entries({ q, type, specialty, area: KFS, ...(featured && { featured: "1" }) }).filter(([, v]) => v) as [string, string][])}`;
   return (
     <div className="container section">
-      <h1 className="page-title">{q ? `نتائج البحث عن "${q}"` : "كل مقدمي الخدمة"}</h1>
-      <p className="muted">{results.length} نتيجة{getArea(area) ? ` في ${getArea(area)!.name}` : ""}</p>
+      <h1 className="page-title">{searchHeading({ q, area, type, specialty })}</h1>
+      <p className="muted">{resultCount(results.length, type === "DOCTOR" || (!!specialty && !type))}</p>
       <div className="sticky-search"><SearchBar compact q={q} area={area} /></div>
       <div className="listing">
         <input id="filter-toggle" type="checkbox" className="sheet-toggle sr-only" aria-label="إظهار أو إخفاء التصفية" />
